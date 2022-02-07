@@ -11,11 +11,13 @@ app = Flask(__name__)  ## Initialising the Flash app with name 'app'
 #CORS(app)
 
 @app.route('/', methods = ['GET'])
+@cross_origin()
 def homepage():
     return render_template("index.html")
 # base URL + /
 # https://localhost:8000 + /
 @app.route('/scrap', methods = ['POST'])
+@cross_origin()
 def index():
     if request.method == 'POST':
 
@@ -44,9 +46,6 @@ def index():
             product_html = bs(productPage.text, "html.parser")
             reviewBox = product_html.find_all("div", {'class': "_16PBlm"})
 
-            ## Creating the collection in DataBase with same name as searchString
-            #table = db[searchString]
-
             reviews = [] # List to store all the reviews under html class _16PBlm
             for review in reviewBox:
                 try:
@@ -72,7 +71,6 @@ def index():
 
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                             "Comment": custComment}
-                #x = table.insert_one(mydict)
                 reviews.append(mydict)
 
             return render_template('results.html', reviews = reviews)
@@ -82,4 +80,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(port = 8000,debug=True)
+    app.run(debug=True)
